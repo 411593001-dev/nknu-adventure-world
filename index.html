@@ -80,27 +80,74 @@ cube(10,.03,170,0,0,-5,mat(0x777e80));
 cube(150,.04,7,0,.01,0,mat(0xc6c1b4));
 
 // 教學大樓與窗戶
+
 function building(x,z,w,d,h){
- cube(w,h,d,x,0,z,wall);
- cube(w+.4,.35,d+.4,x,h,z,mat(0x737b75));
- const floors=Math.floor(h/3);
- const cols=Math.floor(w/2.5);
- for(let f=0;f<floors;f++){
-  for(let c=0;c<cols;c++){
-   const wx=x-w/2+(c+.5)*w/cols;
-   const win=new THREE.Mesh(
-    new THREE.BoxGeometry(w/cols*.55,1,.07),glass);
-   win.position.set(wx,1.4+f*2.7,z-d/2-.04);
-   scene.add(win);
+  // 建築主體
+  cube(w,h,d,x,0,z,wall);
+
+  // 屋頂與頂部邊緣
+  cube(w+.7,.32,d+.7,x,h,z,mat(0x737b75));
+  cube(w+.35,.18,d+.35,x,h-.22,z,mat(0x9aa39c));
+
+  const floors=Math.floor(h/3);
+  const cols=Math.max(3,Math.floor(w/2.5));
+
+  // 正面窗戶、窗框與樓層分隔線
+  for(let f=0;f<floors;f++){
+    const wy=1.5+f*2.7;
+
+    // 樓層水平裝飾線
+    if(f>0){
+      cube(w+.12,.10,.12,x,wy-1.25,z-d/2-.08,mat(0xc5c8bd));
+    }
+
+    for(let c=0;c<cols;c++){
+      const wx=x-w/2+(c+.5)*w/cols;
+      const ww=w/cols*.55;
+
+      // 窗框
+      cube(ww+.16,1.18,.12,wx,wy,z-d/2-.10,mat(0xd4d4c9));
+
+      // 玻璃
+      const win=new THREE.Mesh(
+        new THREE.BoxGeometry(ww, .98, .07),
+        glass
+      );
+      win.position.set(wx,wy,z-d/2-.18);
+      scene.add(win);
+
+      // 窗台
+      cube(ww+.22,.10,.18,wx,wy-.58,z-d/2-.16,mat(0xe1e0d5));
+    }
   }
- }
- cube(2,2.3,.12,x,0,z-d/2-.1,dark);
+
+  // 建築正面入口
+  const frontZ=z-d/2-.16;
+
+  // 門框與入口
+  cube(2.5,2.65,.24,x,1.32,frontZ,mat(0xe2dfd3));
+  cube(1.65,2.15,.12,x,1.08,frontZ-.15,dark);
+
+  // 入口雨棚
+  cube(3.8,.20,1.25,x,2.85,frontZ-.48,mat(0x727c77));
+  cube(.16,2.3,.16,x-1.55,1.15,frontZ-.45,mat(0xb8b8aa));
+  cube(.16,2.3,.16,x+1.55,1.15,frontZ-.45,mat(0xb8b8aa));
+
+  // 入口台階
+  cube(3.8,.18,.8,x,.10,frontZ-.72,mat(0xb8b9ad));
+
+  // 牆面兩側立柱
+  cube(.24,h*.8,.25,x-w/2+.45,h*.42,frontZ-.10,mat(0xd5d4c8));
+  cube(.24,h*.8,.25,x+w/2-.45,h*.42,frontZ-.10,mat(0xd5d4c8));
 }
+
+// 保留原本的五棟建築位置與大小
 building(-20,-18,17,13,12);
 building(21,-22,19,14,15);
 building(-23,20,16,13,9);
 building(23,20,18,14,11);
 building(0,-52,27,13,12);
+
 
 // 校園樹木
 function tree(x,z,s=1){
